@@ -100,3 +100,6 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = 'api.User'
+
+# CSRF Settings for Render
+CSRF_TRUSTED_ORIGINS = ['https://procure-to-pay-2hum.onrender.com']
