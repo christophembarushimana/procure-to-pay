@@ -9,8 +9,6 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 COPY . .
 
-RUN chmod +x render-start.sh
-
 EXPOSE 8000
 
-CMD ["./render-start.sh"]
+CMD python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn procure_to_pay.wsgi:application --bind 0.0.0.0:8000
