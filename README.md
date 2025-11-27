@@ -8,9 +8,10 @@ A Django-based purchase request and approval system with multi-level workflows a
 
 **Admin Panel:** https://procure-to-pay-2hum.onrender.com/admin/
 
-**Test Credentials:**
-- Username: `admin`
-- Password: `AdminPass2024!`
+**Testing Instructions:**
+- Visit the live application and click "Register" to create test accounts
+- Create accounts with different roles (Staff, Approver L1, Approver L2, Finance) to test the complete workflow
+- Admin credentials available upon request for evaluation purposes
 
 ## 📋 Features
 
