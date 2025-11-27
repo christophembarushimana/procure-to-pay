@@ -435,7 +435,7 @@
                     showAlert('loginAlert', 'Invalid credentials', 'error');
                 }
             } catch (error) {
-                showAlert('loginAlert', 'Connection error', 'error');
+                showAlert('loginAlert', 'Connection error: ' + error.message, 'error');
             }
         }
 
@@ -468,13 +468,13 @@
                     showAlert('registerAlert', 'Registration failed: ' + JSON.stringify(data), 'error');
                 }
             } catch (error) {
-                showAlert('registerAlert', 'Connection error', 'error');
+                showAlert('registerAlert', 'Connection error: ' + error.message, 'error');
             }
         }
 
         async function fetchCurrentUser() {
             try {
-                const response = await fetch(`${API_URL}/auth/`, {
+                const response = await fetch(`${API_URL}/auth/me/`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -622,7 +622,7 @@
                     showAlert('createAlert', 'Error: ' + JSON.stringify(error), 'error');
                 }
             } catch (error) {
-                showAlert('createAlert', 'Connection error', 'error');
+                showAlert('createAlert', 'Connection error: ' + error.message, 'error');
             }
         }
 
@@ -643,7 +643,7 @@
                     alert('Error: ' + JSON.stringify(error));
                 }
             } catch (error) {
-                alert('Connection error');
+                alert('Connection error: ' + error.message);
             }
         }
 
@@ -669,7 +669,7 @@
                     alert('Error: ' + JSON.stringify(error));
                 }
             } catch (error) {
-                alert('Connection error');
+                alert('Connection error: ' + error.message);
             }
         }
 
@@ -700,7 +700,7 @@
                     alert('Error submitting receipt');
                 }
             } catch (error) {
-                alert('Connection error');
+                alert('Connection error: ' + error.message);
             }
         }
 
