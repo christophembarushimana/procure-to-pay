@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procure-to-Pay System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 1200px;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .requests-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .request-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .request-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .request-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .status-approved {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-rejected {
+            background: #dc3545;
+            color: white;
+        }
+
+        .request-details {
+            margin: 15px 0;
+            color: #666;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .approval-info {
+            background: #e7f3ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .file-input {
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Screen -->
+        <div id="loginScreen">
+            <div class="header">
+                <h1>🧩 Procure-to-Pay System</h1>
+                <p>Please login to continue</p>
+            </div>
+            <div class="login-form">
+                <div id="loginAlert"></div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password">
+                </div>
+                <button class="btn" onclick="login()" style="width: 100%;">Login</button>
+                <p style="text-align: center; margin-top: 20px;">
+                    <a href="#" onclick="showRegister()">Don't have an account? Register</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Register Screen -->
+        <div id="registerScreen" class="hidden">
+            <div class="header">
+                <h1>Register New Account</h1>
+            </div>
+            <div class="login-form">
+                <div id="registerAlert"></div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="regUsername" placeholder="Choose username">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="Choose password">
+                </div>
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="regFirstName" placeholder="Enter first name">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="regLastName" placeholder="Enter last name">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="regRole">
+                        <option value="staff">Staff</option>
+                        <option value="approver_level_1">Approver Level 1</option>
+                        <option value="approver_level_2">Approver Level 2</option>
+                        <option value="finance">Finance</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="register()" style="width: 100%;">Register</button>
+                <p style="text-align: center; margin-top: 20px;">
+                    <a href="#" onclick="showLogin()">Already have an account? Login</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div id="dashboardScreen" class="hidden">
+            <div class="header">
+                <h1>📊 Dashboard</h1>
+            </div>
+            <div class="user-info">
+                <div>
+                    <strong id="currentUser"></strong>
+                    <span id="currentRole"></span>
+                </div>
+                <button class="btn btn-danger" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('list')">My Requests</button>
+                <button class="tab" id="createTab" onclick="showTab('create')">Create Request</button>
+            </div>
+
+            <!-- Create Request Form -->
+            <div id="createRequestForm" class="hidden">
+                <h2 style="margin-bottom: 20px;">Create New Purchase Request</h2>
+                <div id="createAlert"></div>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="reqTitle" placeholder="Enter request title">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="reqDescription" placeholder="Describe the purchase request"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="reqAmount" placeholder="Enter amount" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Proforma/Quotation (PDF)</label>
+                    <input type="file" id="reqProforma" accept=".pdf" class="file-input">
+                </div>
+                <button class="btn" onclick="createRequest()">Submit Request</button>
+            </div>
+
+            <!-- Requests List -->
+            <div id="requestsList">
+                <div class="loading">Loading requests...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_URL = window.location.origin + '/api';
+        let token = localStorage.getItem('token');
+        let currentUser = null;
+
+        // Initialize
+        if (token) {
+            fetchCurrentUser();
+        } else {
+            showScreen('login');
+        }
+
+        // Screen Management
+        function showScreen(screen) {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('registerScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById(screen + 'Screen').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            showScreen('login');
+        }
+
+        function showRegister() {
+            showScreen('register');
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'create') {
+                document.getElementById('createRequestForm').classList.remove('hidden');
+                document.getElementById('requestsList').classList.add('hidden');
+            } else {
+                document.getElementById('createRequestForm').classList.add('hidden');
+                document.getElementById('requestsList').classList.remove('hidden');
+                loadRequests();
+            }
+        }
+
+        // Authentication
+        async function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    token = data.access;
+                    localStorage.setItem('token', token);
+                    await fetchCurrentUser();
+                    showScreen('dashboard');
+                    loadRequests();
+                } else {
+                    showAlert('loginAlert', 'Invalid credentials', 'error');
+                }
+            } catch (error) {
+                showAlert('loginAlert', 'Connection error', 'error');
+            }
+        }
+
+        async function register() {
+            const userData = {
+                username: document.getElementById('regUsername').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                first_name: document.getElementById('regFirstName').value,
+                last_name: document.getElementById('regLastName').value,
+                role: document.getElementById('regRole').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    token = data.access;
+                    localStorage.setItem('token', token);
+                    await fetchCurrentUser();
+                    showScreen('dashboard');
+                    loadRequests();
+                } else {
+                    showAlert('registerAlert', 'Registration failed: ' + JSON.stringify(data), 'error');
+                }
+            } catch (error) {
+                showAlert('registerAlert', 'Connection error', 'error');
+            }
+        }
+
+        async function fetchCurrentUser() {
+            try {
+                const response = await fetch(`${API_URL}/auth/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    currentUser = await response.json();
+                    document.getElementById('currentUser').textContent = currentUser.username;
+                    document.getElementById('currentRole').textContent = ` (${currentUser.role})`;
+                    
+                    // Show create tab only for staff
+                    if (currentUser.role === 'staff') {
+                        document.getElementById('createTab').classList.remove('hidden');
+                    }
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                logout();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            token = null;
+            currentUser = null;
+            showScreen('login');
+        }
+
+        // Requests Management
+        async function loadRequests() {
+            document.getElementById('requestsList').innerHTML = '<div class="loading">Loading requests...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/requests/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const requests = await response.json();
+
+                if (requests.length === 0) {
+                    document.getElementById('requestsList').innerHTML = '<p style="text-align:center;padding:40px;">No requests found</p>';
+                    return;
+                }
+
+                let html = '<div class="requests-grid">';
+                requests.forEach(req => {
+                    html += createRequestCard(req);
+                });
+                html += '</div>';
+
+                document.getElementById('requestsList').innerHTML = html;
+            } catch (error) {
+                document.getElementById('requestsList').innerHTML = '<p style="text-align:center;color:red;">Error loading requests</p>';
+            }
+        }
+
+        function createRequestCard(req) {
+            const statusClass = `status-${req.status}`;
+            let actions = '';
+
+            if (currentUser.role === 'approver_level_1' && req.status === 'pending' && !req.level_1_approved) {
+                actions = `
+                    <div class="request-actions">
+                        <button class="btn btn-success" onclick="approveRequest(${req.id})">Approve (L1)</button>
+                        <button class="btn btn-danger" onclick="rejectRequest(${req.id})">Reject</button>
+                    </div>
+                `;
+            } else if (currentUser.role === 'approver_level_2' && req.status === 'pending' && req.level_1_approved && !req.level_2_approved) {
+                actions = `
+                    <div class="request-actions">
+                        <button class="btn btn-success" onclick="approveRequest(${req.id})">Approve (L2)</button>
+                        <button class="btn btn-danger" onclick="rejectRequest(${req.id})">Reject</button>
+                    </div>
+                `;
+            } else if (currentUser.role === 'staff' && req.status === 'approved' && !req.receipt) {
+                actions = `
+                    <div class="request-actions">
+                        <input type="file" id="receipt-${req.id}" accept=".pdf" class="file-input" style="flex:1;">
+                        <button class="btn" onclick="submitReceipt(${req.id})">Submit Receipt</button>
+                    </div>
+                `;
+            }
+
+            let approvalInfo = '';
+            if (req.level_1_approved) {
+                approvalInfo += `<div class="approval-info">✅ Level 1 Approved by ${req.level_1_approver_name || 'N/A'}</div>`;
+            }
+            if (req.level_2_approved) {
+                approvalInfo += `<div class="approval-info">✅ Level 2 Approved by ${req.level_2_approver_name || 'N/A'}</div>`;
+            }
+            if (req.rejected_by) {
+                approvalInfo += `<div class="approval-info" style="background:#ffebee;">❌ Rejected by ${req.rejected_by_name || 'N/A'}<br>Reason: ${req.rejection_reason || 'N/A'}</div>`;
+            }
+
+            return `
+                <div class="request-card">
+                    <div class="request-header">
+                        <div class="request-title">${req.title}</div>
+                        <div class="status-badge ${statusClass}">${req.status.toUpperCase()}</div>
+                    </div>
+                    <div class="request-details">
+                        <p><strong>Amount:</strong> $${req.amount}</p>
+                        <p><strong>Description:</strong> ${req.description}</p>
+                        <p><strong>Created:</strong> ${new Date(req.created_at).toLocaleDateString()}</p>
+                        ${req.proforma ? '<p><strong>Proforma:</strong> ✅ Uploaded</p>' : ''}
+                        ${req.purchase_order_data ? '<p><strong>PO Number:</strong> ' + req.purchase_order_data.po_number + '</p>' : ''}
+                        ${req.receipt ? '<p><strong>Receipt:</strong> ✅ Submitted</p>' : ''}
+                    </div>
+                    ${approvalInfo}
+                    ${actions}
+                </div>
+            `;
+        }
+
+        async function createRequest() {
+            const formData = new FormData();
+            formData.append('title', document.getElementById('reqTitle').value);
+            formData.append('description', document.getElementById('reqDescription').value);
+            formData.append('amount', document.getElementById('reqAmount').value);
+            
+            const proforma = document.getElementById('reqProforma').files[0];
+            if (proforma) {
+                formData.append('proforma', proforma);
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/requests/`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showAlert('createAlert', 'Request created successfully!', 'success');
+                    document.getElementById('reqTitle').value = '';
+                    document.getElementById('reqDescription').value = '';
+                    document.getElementById('reqAmount').value = '';
+                    document.getElementById('reqProforma').value = '';
+                    
+                    setTimeout(() => {
+                        showTab('list');
+                        document.querySelector('.tab').click();
+                    }, 1500);
+                } else {
+                    const error = await response.json();
+                    showAlert('createAlert', 'Error: ' + JSON.stringify(error), 'error');
+                }
+            } catch (error) {
+                showAlert('createAlert', 'Connection error', 'error');
+            }
+        }
+
+        async function approveRequest(id) {
+            if (!confirm('Approve this request?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/requests/${id}/approve/`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    alert('Request approved successfully!');
+                    loadRequests();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + JSON.stringify(error));
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        async function rejectRequest(id) {
+            const reason = prompt('Enter rejection reason:');
+            if (!reason) return;
+
+            try {
+                const response = await fetch(`${API_URL}/requests/${id}/reject/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                if (response.ok) {
+                    alert('Request rejected');
+                    loadRequests();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + JSON.stringify(error));
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        async function submitReceipt(id) {
+            const fileInput = document.getElementById(`receipt-${id}`);
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a receipt file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('receipt', file);
+
+            try {
+                const response = await fetch(`${API_URL}/requests/${id}/submit_receipt/`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert('Receipt submitted! Validation: ' + data.validation.message);
+                    loadRequests();
+                } else {
+                    alert('Error submitting receipt');
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        function showAlert(elementId, message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            document.getElementById(elementId).innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            setTimeout(() => {
+                document.getElementById(elementId).innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
